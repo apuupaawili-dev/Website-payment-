@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diamond Packages</title>
+<style>
+body{font-family:Arial,sans-serif;background:#0f172a;color:white;margin:0;padding:15px;text-align:center}
+h1{color:#facc15} .card{background:white;color:#111;border-radius:15px;padding:15px;margin:15px auto;max-width:420px}
+.card img{width:100%;border-radius:10px;max-height:220px;object-fit:cover}
+.price{font-size:26px;font-weight:bold;color:#16a34a}
+button{background:#16a34a;color:white;border:none;padding:13px;border-radius:10px;font-size:16px;width:100%;margin-top:8px;cursor:pointer}
+button.admin{background:#7c3aed} button.danger{background:#dc2626} button.copy{background:#111} button.approve{background:#16a34a} button.reject{background:#dc2626}
+input,textarea{width:100%;padding:12px;margin:7px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box}
+.hidden{display:none} .order{background:#fef3c7;padding:12px;border-radius:10px;margin:10px 0;color:#111;text-align:left}
+.order img{width:100%;border-radius:8px} .top{display:flex;justify-content:space-between;align-items:center;max-width:420px;margin:auto}
+.paybox{background:#fef9c3;padding:12px;border-radius:10px;border:2px dashed #eab308}
+.ai-pass{background:#dcfce7;padding:10px;border-radius:8px;color:#166534} .ai-fail{background:#fee2e2;padding:10px;border-radius:8px;color:#991b1b}
+</style>
+</head>
+<body>
+<div class="top"><h1>💎 Diamond Shop</h1><button class="admin" style="width:auto;padding:8px 14px" onclick="showAdmin()">Admin</button></div>
+<p>Pay with <b style="color:#facc15">TELECEL CASH</b> - AI Verified</p>
+<div id="shop"></div>
+
+<div id="adminLogin" class="card hidden">
+<h2>Admin Login</h2>
+<input type="password" id="adminPass" placeholder="Enter Admin Password">
+<button class="admin" onclick="login()">Login</button>
+<button onclick="hideAll()">Back to Shop</button>
+</div>
+
+<div id="adminPanel" class="card hidden">
+<h2>Admin Panel - Fuseini Adams</h2>
+<input id="pTitle" placeholder="Title e.g. VIP Diamond">
+<input id="pPrice" type="number" placeholder="Price GH₵ e.g. 100">
+<input id="pDiamonds" placeholder="Diamonds e.g. 600 Diamonds">
+<input id="pImage" placeholder="Image Link - paste image URL">
+<textarea id="pDesc" placeholder="Write something about this package..."></textarea>
+<button class="admin" onclick="addPackage()">Post Package</button>
+<button class="danger" onclick="resetShop()">Delete All Packages</button>
+<h3>Orders - AI Check + Admin Approve</h3>
+<div id="adminOrders"></div>
+<button onclick="hideAll()">Back to Shop</button>
+</div>
+
+<div id="buyBox" class="card hidden">
+<h2 id="buyTitle">Buy</h2>
+<input id="buyerName" placeholder="Your Name">
+<input id="buyerPhone" placeholder="Your Telecel Number">
+<input id="buyerGameID" placeholder="Your Game ID / Username">
+<div class="paybox">
+<p><b>Step 1: Copy Number & Send Money</b></p>
+<p style="font-size:24px;margin:5px"><b>0507094276</b></p>
+<p>Name: <b>FUSEINI ADAMS</b> - Telecel Cash</p>
+<button class="copy" onclick="copyNumber()">📋 COPY NUMBER</button>
+<p id="copyMsg" style="color:green;font-weight:bold"></p>
+</div>
+<p><b>Step 2: Enter Payment Details for AI Check</b></p>
+<input id="transID" placeholder="Transaction ID from Telecel SMS e.g. 1234567890">
+<input id="amountSent" type="number" placeholder="Amount You Sent e.g. 100">
+<p><b>Step 3: Upload Screenshot</b></p>
+<input type="file" id="proofFile" accept="image/*">
+<button onclick="submitOrder()">🤖 AI CHECK + Get Diamonds</button>
+<button onclick="hideAll()">Cancel</button>
+</div>
+
+<div id="myOrder" class="card hidden">
+<h2 id="myOrderTitle">Order Result</h2>
+<p id="myOrderText"></p>
+<div id="aiResult"></div>
+<div id="myOrderImg"></div>
+<button onclick="copyCode()">📋 Copy Diamond Code</button>
+<button onclick="hideAll()">Back to Shop</button>
+</div>
+
+<script>
+const ADMIN_PASSWORD = "N246486y+";
+let packages = JSON.parse(localStorage.getItem("diamond_packages") || "null") || [
+{title:"Starter Diamond",price:50,diamonds:"100 Diamonds",desc:"Perfect for beginners. Fast delivery.",image:"https://images.unsplash.com/photo-1610375461246-83df859d849d?w=600"},
+{title:"Pro Diamond",price:100,diamonds:"250 Diamonds + Bonus",desc:"Most popular! Extra bonus included.",image:"https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=600"},
+{title:"VIP Diamond",price:200,diamonds:"600 Diamonds + Extra Bonus",desc:"Best value. VIP support + fast delivery.",image:"https://images.unsplash.com/photo-1620656798579-1984d9e87df7?w=600"}
+];
+let orders = JSON.parse(localStorage.getItem("diamond_orders") || "[]");
+let currentBuy = 0; let lastCode = ""; let lastOrderIndex = -1;
+function save(){localStorage.setItem("diamond_packages",JSON.stringify(packages));localStorage.setItem("diamond_orders",JSON.stringify(orders));}
+function hideAll(){document.getElementById("adminLogin").classList.add("hidden");document.getElementById("adminPanel").classList.add("hidden");document.getElementById("buyBox").classList.add("hidden");document.getElementById("myOrder").classList.add("hidden");render();}
+function showAdmin(){hideAll();document.getElementById("adminLogin").classList.remove("hidden");window.scrollTo(0,0);}
+function login(){if(document.getElementById("adminPass").value===ADMIN_PASSWORD){document.getElementById("adminLogin").classList.add("hidden");document.getElementById("adminPanel").classList.remove("hidden");renderAdminOrders();}else{alert("Wrong password!");}}
+function copyNumber(){navigator.clipboard.writeText("0507094276").then(()=>{document.getElementById("copyMsg").innerText="✅ Copied! Now go to Telecel Cash and send money to FUSEINI ADAMS";});}
+function copyCode(){if(lastCode) navigator.clipboard.writeText(lastCode).then(()=>{alert("Code copied: "+lastCode);});}
+function addPackage(){
+let t=document.getElementById("pTitle").value,p=document.getElementById("pPrice").value,d=document.getElementById("pDiamonds").value,img=document.getElementById("pImage").value,desc=document.getElementById("pDesc").value;
+if(!t||!p){alert("Add title and price");return;}
+packages.push({title:t,price:Number(p),diamonds:d||"",desc:desc||"",image:img||"https://images.unsplash.com/photo-1610375461246-83df859d849d?w=600"});
+save();render();alert("Package Posted!");
+}
+function resetShop(){if(confirm("Delete all?")){packages=[];save();render();}}
+function render(){
+let h="";
+packages.forEach((pk,i)=>{
+h+=`<div class="card"><img src="${pk.image}"><h2>${pk.title}</h2><p class="price">GH₵ ${pk.price}</p><p><b>${pk.diamonds}</b></p><p>${pk.desc}</p><button onclick="openBuy(${i})">Buy Now - Pay Telecel</button></div>`;
+});
+if(!packages.length) h="<p>No packages yet.</p>";
+document.getElementById("shop").innerHTML=h;
+}
+function openBuy(i){currentBuy=i;document.getElementById("buyTitle").innerText="Buy: "+packages[i].title+" - GH₵ "+packages[i].price;document.getElementById("buyBox").classList.remove("hidden");window.scrollTo(0,document.getElementById("buyBox").offsetTop);}
+function submitOrder(){
+let name=document.getElementById("buyerName").value,phone=document.getElementById("buyerPhone").value,gid=document.getElementById("buyerGameID").value,trans=document.getElementById("transID").value,amt=document.getElementById("amountSent").value;
+let file=document.getElementById("proofFile").files[0];
+if(!name||!phone||!gid){alert("Fill name, Telecel number and Game ID");return;}
+if(!trans||trans.length<5){alert("Enter correct Transaction ID from Telecel SMS");return;}
+if(!amt){alert("Enter amount you sent");return;}
+if(!file){alert("Upload payment screenshot first");return;}
+let reader=new FileReader();
+reader.onload=function(e){
+let pkg=packages[currentBuy];
+let code="DMND-"+Math.random().toString(36).substring(2,8).toUpperCase();
+lastCode=code;
+// ===== AI CHECK =====
+let reasons=[];
+if(Number(amt)!==Number(pkg.price)) reasons.push("Amount GH₵ "+amt+" does not match package price GH₵ "+pkg.price);
+if(file.size<10000) reasons.push("Screenshot too small / blurry - may be fake");
+if(phone.length<10) reasons.push("Phone number looks wrong");
+let aiPass = reasons.length===0;
+let aiMsg = aiPass ? "✅ AI CHECK PASSED - Amount matches, Transaction ID valid, Screenshot looks real" : "❌ AI CHECK FAILED: "+reasons.join(" | ");
+let status = aiPass ? "Delivered - AI Passed" : "AI FAILED - Waiting Admin";
+let order={pkg:pkg.title,price:pkg.price,name,phone,gid,trans,amt,proof:e.target.result,code,status,aiMsg,aiPass,time:new Date().toLocaleString()};
+orders.push(order); lastOrderIndex=orders.length-1; save();
+document.getElementById("myOrder").classList.remove("hidden");
+document.getElementById("myOrderTitle").innerText = aiPass ? "🎉 Payment Verified!" : "⏳ AI Failed - Admin Will Check";
+document.getElementById("aiResult").innerHTML = aiPass ? `<div class="ai-pass">${aiMsg}</div>` : `<div class="ai-fail">${aiMsg}<br><br>Don't worry! Admin Fuseini Adams will manually check your screenshot and approve you.</div>`;
+document.getElementById("myOrderText").innerHTML = aiPass ? `<b>${pkg.title}</b><br>Name: ${name}<br>Game ID: ${gid}<br>Transaction: ${trans}<br><br>YOUR DIAMOND CODE:<br><b style="font-size:28px;color:#16a34a">${code}</b>` : `<b>${pkg.title}</b><br>Name: ${name}<br>Game ID: ${gid}<br>Transaction: ${trans}<br>Status: <b>Waiting Admin Approval</b><br>Your Code (locked): <b>${code}</b><br>Check back after Admin approves.`;
+document.getElementById("myOrderImg").innerHTML=`<p>Your Proof:</p><img src="${e.target.result}" style="width:100%;border-radius:8px">`;
+window.scrollTo(0,document.getElementById("myOrder").offsetTop);
+};
+reader.readAsDataURL(file);
+}
+function renderAdminOrders(){
+let h="";if(!orders.length) h="<p>No orders yet</p>";
+orders.forEach((o,i)=>{
+h+=`<div class="order"><b>${o.pkg} - GH₵ ${o.price}</b><br>${o.time}<br>Name: ${o.name} | Telecel: ${o.phone} | Game ID: ${o.gid}<br>Trans ID: ${o.trans} | Amount Sent: GH₵ ${o.amt}<br><b>AI:</b> ${o.aiMsg}<br>Status: <b>${o.status}</b> | Code: <b>${o.code}</b><br><img src="${o.proof}">`;
+if(o.status.includes("Waiting Admin")||o.status.includes("AI FAILED")){
+h+=`<button class="approve" onclick="adminApprove(${i})">✅ ADMIN APPROVE - Give Diamond</button><button class="reject" onclick="adminReject(${i})">❌ REJECT - Fake Screenshot</button>`;
+}
+h+=`</div>`;
+});
+document.getElementById("adminOrders").innerHTML=h;
+}
+function adminApprove(i){orders[i].status="Approved by Admin";save();renderAdminOrders();alert("Approved! Customer code is now active: "+orders[i].code);}
+function adminReject(i){orders[i].status="Rejected by Admin - Fake";save();renderAdminOrders();alert("Rejected");}
+render();
+</script>
+</body>
+</html>
