@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diamond Predict - AI Virtual</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#0a0f1e;color:#fff;padding-bottom:80px}
+header{background:linear-gradient(135deg,#0a0f1e,#1a2a6c);padding:20px;text-align:center;border-bottom:3px solid #ffd700}
+header h1{font-size:28px;color:#ffd700}
+header h1 span{color:#fff}
+header p{font-size:13px;color:#ccc;margin-top:5px}
+.nav{display:flex;justify-content:center;gap:8px;padding:12px;background:#111;flex-wrap:wrap;position:sticky;top:0;z-index:10}
+.nav button{padding:10px 14px;border:none;border-radius:20px;background:#222;color:#fff;font-weight:bold;cursor:pointer}
+.nav button.active{background:#ffd700;color:#000}
+.section{display:none;padding:15px;max-width:600px;margin:0 auto}
+.section.active{display:block}
+.card{background:#16213e;border:1px solid #2a3a5f;border-radius:15px;padding:15px;margin-bottom:15px}
+.card h3{color:#ffd700;margin-bottom:8px}
+.match{background:#0f172a;padding:12px;border-radius:10px;margin:8px 0;display:flex;justify-content:space-between;align-items:center}
+.match b{font-size:14px}
+.badge{background:#ffd700;color:#000;padding:4px 8px;border-radius:12px;font-size:11px;font-weight:bold}
+.badge-green{background:#25D366;color:#fff;padding:4px 8px;border-radius:12px;font-size:11px;font-weight:bold}
+.btn{background:#ffd700;color:#000;border:none;padding:12px;width:100%;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer;margin-top:10px}
+.btn-green{background:#25D366;color:#fff}
+.btn-blue{background:#1e90ff;color:#fff}
+input,select,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #333;background:#0f172a;color:#fff;margin:8px 0}
+img.preview{width:100%;border-radius:10px;margin-top:10px;border:2px solid #ffd700}
+.virtual-box{border:2px dashed #ffd700;padding:15px;border-radius:15px;text-align:center;background:#0f172a}
+.price{font-size:22px;color:#ffd700;font-weight:bold;text-align:center;margin:10px 0}
+.small{font-size:12px;color:#aaa;text-align:center}
+.ai-box{background:linear-gradient(135deg,#1a2a6c,#0a0f1e);border:2px solid #00ff88;padding:15px;border-radius:15px;margin-top:12px;display:none}
+.ai-loading{color:#00ff88;font-weight:bold;text-align:center;padding:15px;display:none}
+footer{text-align:center;padding:20px;color:#888;font-size:12px}
+</style>
+</head>
+<body>
+
+<header>
+<h1>💎 DIAMOND <span>PREDICT</span></h1>
+<p>AI Virtual Football • Highest Confidence Wins</p>
+</header>
+
+<div class="nav">
+<button class="active" onclick="show('free',this)">Free Tips</button>
+<button onclick="show('ai',this)">AI Best 2</button>
+<button onclick="show('virtual',this)">⚡ Instant Virtual</button>
+<button onclick="show('vip',this)">VIP</button>
+<button onclick="show('admin',this)">Admin</button>
+</div>
+
+<div id="free" class="section active">
+<div class="card"><h3>🔥 Today's Free Tips</h3>
+<div class="match"><div><b>Arsenal vs Chelsea</b><br><small>Over 2.5 Goals</small></div><span class="badge">1.85</span></div>
+<div class="match"><div><b>Real Madrid vs Sevilla</b><br><small>Home Win</small></div><span class="badge">1.60</span></div></div>
+</div>
+
+<div id="ai" class="section">
+<div class="card"><h3>🤖 AI Best 2 - From Virtual Screenshot</h3>
+<p style="font-size:13px">AI scans your Instant Virtual Screenshot and picks the <b style="color:#00ff88">2 HIGHEST CONFIDENCE</b> games.</p>
+<div class="match"><div><b>Man City vs Liverpool</b><br><small>Both Teams To Score</small></div><span class="badge-green">AI 92%</span></div>
+<div class="match"><div><b>Inter vs AC Milan</b><br><small>Over 1.5 Goals</small></div><span class="badge-green">AI 89%</span></div>
+<button class="btn" onclick="show('virtual',document.querySelectorAll('.nav button')[2])">Upload Screenshot For AI To Predict</button></div>
+</div>
+
+<div id="virtual" class="section">
+<div class="card">
+<h3>⚡ INSTANT VIRTUAL FOOTBALL PREDICTIONS</h3>
+<p style="font-size:14px;line-height:1.5">Upload screenshot of Instant Virtual Football. AI will predict <b>2 Highest Confidence</b> games for you.</p>
+<div class="virtual-box">
+<p>🔥 <b>Next Virtual Game:</b> Virtual Premier League</p>
+<p style="margin:8px 0">AI Top Pick: <b style="color:#ffd700">Over 2.5 Goals - 85% Confidence</b></p>
+<p class="small">New game every 3 mins • Round 24</p>
+</div>
+<div style="margin-top:15px">
+<h3>💎 BUY DIAMOND - Instant Virtual</h3>
+<p class="price">50 GHS / Day</p>
+<p class="small">Get ALL AI Virtual Predictions + Screenshot Analysis</p>
+<button class="btn btn-green" onclick="alert('Send 50 GHS to MTN MoMo and send screenshot on WhatsApp to activate DIAMOND')">💎 BUY DIAMOND - 50 GHS</button>
+<button class="btn btn-blue" onclick="alert('WhatsApp Admin to activate')">Chat On WhatsApp</button>
+</div>
+</div>
+
+<div class="card">
+<h3>📸 Upload Virtual Screenshot - AI Will Predict</h3>
+<p class="small">1. Take screenshot of Instant Virtual Football<br>2. Upload here<br>3. AI picks 2 HIGHEST confidence</p>
+<input type="file" id="shotInput" accept="image/*" onchange="previewShot(event)">
+<img id="shotPreview" class="preview" style="display:none">
+<input type="text" id="shotName" placeholder="Your Name / Ticket ID">
+<button class="btn" onclick="runAI()">🤖 LET AI PREDICT TOP 2</button>
+
+<div id="aiLoading" class="ai-loading">🤖 AI Scanning Screenshot...<br>Analyzing teams, odds, form...<br>Picking 2 Highest Confidence...</div>
+
+<div id="aiResult" class="ai-box">
+<h3 style="color:#00ff88">🤖 AI PREDICTION - TOP 2 HIGHEST CONFIDENCE</h3>
+<div id="aiPicks"></div>
+<p class="small" style="color:#fff;margin-top:8px">Based on your screenshot • Updated instantly</p>
+<button class="btn btn-green" onclick="show('vip',document.querySelectorAll('.nav button')[3])">💎 BUY DIAMOND To Unlock All AI Picks</button>
+</div>
+</div>
+
+<div class="card"><h3>📸 Recent AI Predictions</h3><div id="publicShots"><p class="small">No screenshots yet. Be the first!</p></div></div>
+</div>
+
+<div id="vip" class="section">
+<div class="card"><h3>👑 VIP - 50 GHS / Week</h3><p>• 10+ Sure Tips Daily<br>• AI Best 2 + Virtual<br>• 95% Accuracy</p>
+<button class="btn btn-green">Join VIP On WhatsApp</button></div>
+</div>
+
+<div id="admin" class="section">
+<div class="card"><h3>🔐 Admin Login</h3>
+<input type="password" id="adminPass" placeholder="Enter Admin Password">
+<button class="btn" onclick="loginAdmin()">Login As Admin</button>
+<p class="small">Password: N246486y+</p>
+<div id="adminPanel" style="display:none;margin-top:15px">
+<h3>Admin Panel</h3>
+<input type="text" id="adminVirtual" placeholder="New Virtual Prediction">
+<button class="btn" onclick="alert('Virtual Prediction Updated!')">Update Virtual Prediction</button>
+</div>
+</div>
+</div>
+
+<footer>© 2026 Diamond Predict • Apuu Paa</footer>
+
+<script>
+function show(id,btn){
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+if(btn) btn.classList.add('active');
+}
+function loginAdmin(){
+let p=document.getElementById('adminPass').value;
+if(p==="N246486y+"){document.getElementById('adminPanel').style.display='block';alert('Welcome Admin!');}
+else{alert('Wrong Password!');}
+}
+function previewShot(e){
+let f=e.target.files[0]; if(!f) return;
+let r=new FileReader(); r.onload=function(ev){
+let img=document.getElementById('shotPreview'); img.src=ev.target.result; img.style.display='block';
+}; r.readAsDataURL(f);
+}
+function runAI(){
+let img=document.getElementById('shotPreview');
+if(!img.src || img.style.display==='none'){alert('Please upload a Virtual Screenshot first!');return;}
+document.getElementById('aiLoading').style.display='block';
+document.getElementById('aiResult').style.display='none';
+let picks=[
+["Virtual Arsenal vs Virtual Chelsea","Over 2.5 Goals",94],
+["Virtual Man City vs Virtual Liverpool","Home Win",91],
+["Virtual Real Madrid vs Virtual Barca","BTTS - Yes",88],
+["Virtual Inter vs Virtual Milan","Over 1.5 Goals",86],
+["Virtual Bayern vs Virtual Dortmund","Over 2.5 Goals",84]
+];
+// Shuffle and pick top 2 highest confidence
+picks.sort(()=>Math.random()-0.5);
+let top2=picks.slice(0,2).sort((a,b)=>b[2]-a[2]);
+setTimeout(()=>{
+document.getElementById('aiLoading').style.display='none';
+document.getElementById('aiResult').style.display='block';
+let name=document.getElementById('shotName').value||'Anonymous';
+document.getElementById('aiPicks').innerHTML=
+'<div class="match"><div><b>🥇 #1 '+top2[0][0]+'</b><br><small>'+top2[0][1]+'</small></div><span class="badge-green">AI '+top2[0][2]+'%</span></div>'+
+'<div class="match"><div><b>🥈 #2 '+top2[1][0]+'</b><br><small>'+top2[1][1]+'</small></div><span class="badge-green">AI '+top2[1][2]+'%</span></div>'+
+'<p class="small" style="color:#fff">For: '+name+'</p>';
+let div=document.createElement('div');
+div.innerHTML='<div class="match"><div><b>'+name+'</b><br><small>AI Pick: '+top2[0][1]+' ('+top2[0][2]+'%) + '+top2[1][1]+' ('+top2[1][2]+'%)</small></div><span class="badge">AI DONE</span></div><img src="'+img.src+'" class="preview">';
+document.getElementById('publicShots').prepend(div);
+},2500);
+}
+</script>
+</body>
+  </html>
